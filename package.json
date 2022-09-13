@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon -e ts -w ./src -x npm run start:watch",
-    "start:watch": "ts-node -r dotenv/config src/index.ts"
+    "start:watch": "NODE_ENV=development ts-node -r dotenv/config src/index.ts",
+    "start:prod": "NODE_ENV=production ts-node -r dotenv/config src/index.ts"
   },
   "keywords": [],
   "author": "",

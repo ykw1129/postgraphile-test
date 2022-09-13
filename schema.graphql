@@ -17,46 +17,79 @@ type Query implements Node {
     nodeId: ID!
   ): Node
 
-  """Reads a set of `City`."""
-  citiesList(
+  """Reads a set of `Order`."""
+  ordersList(
     """Only read the first `n` values of the set."""
     first: Int
 
     """Skip the first `n` values."""
     offset: Int
 
-    """The method to use when ordering `City`."""
-    orderBy: [CitiesOrderBy!]
+    """The method to use when ordering `Order`."""
+    orderBy: [OrdersOrderBy!]
 
     """
     A condition to be used in determining which values should be returned by the collection.
     """
-    condition: CityCondition
-  ): [City!]
+    condition: OrderCondition
+  ): [Order!]
 
-  """Reads a set of `Weather`."""
-  weathersList(
+  """Reads a set of `Product`."""
+  productsList(
     """Only read the first `n` values of the set."""
     first: Int
 
     """Skip the first `n` values."""
     offset: Int
 
-    """The method to use when ordering `Weather`."""
-    orderBy: [WeathersOrderBy!]
+    """The method to use when ordering `Product`."""
+    orderBy: [ProductsOrderBy!]
 
     """
     A condition to be used in determining which values should be returned by the collection.
     """
-    condition: WeatherCondition
-  ): [Weather!]
-  city(city: String!): City
+    condition: ProductCondition
+  ): [Product!]
 
-  """Reads a single `City` using its globally unique `ID`."""
-  cityByNodeId(
-    """The globally unique `ID` to be used in selecting a single `City`."""
+  """Reads a set of `ProductsOrder`."""
+  productsOrdersList(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Skip the first `n` values."""
+    offset: Int
+
+    """The method to use when ordering `ProductsOrder`."""
+    orderBy: [ProductsOrdersOrderBy!]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ProductsOrderCondition
+  ): [ProductsOrder!]
+  order(orderId: Int!): Order
+  product(productId: Int!): Product
+  productsOrder(productId: Int!, orderId: Int!): ProductsOrder
+
+  """Reads a single `Order` using its globally unique `ID`."""
+  orderByNodeId(
+    """The globally unique `ID` to be used in selecting a single `Order`."""
     nodeId: ID!
-  ): City
+  ): Order
+
+  """Reads a single `Product` using its globally unique `ID`."""
+  productByNodeId(
+    """The globally unique `ID` to be used in selecting a single `Product`."""
+    nodeId: ID!
+  ): Product
+
+  """Reads a single `ProductsOrder` using its globally unique `ID`."""
+  productsOrderByNodeId(
+    """
+    The globally unique `ID` to be used in selecting a single `ProductsOrder`.
+    """
+    nodeId: ID!
+  ): ProductsOrder
 }
 
 """An object with a globally unique `ID`."""
@@ -67,176 +100,303 @@ interface Node {
   nodeId: ID!
 }
 
-type City implements Node {
+type Order implements Node {
   """
   A globally unique identifier. Can be used in various places throughout the system to identify this single value.
   """
   nodeId: ID!
-  city: String!
-  location: Point
+  orderId: Int!
+  createdate: Date!
 
-  """Reads and enables pagination through a set of `Weather`."""
-  weathersByCityList(
+  """Reads and enables pagination through a set of `ProductsOrder`."""
+  productsOrdersList(
     """Only read the first `n` values of the set."""
     first: Int
 
     """Skip the first `n` values."""
     offset: Int
 
-    """The method to use when ordering `Weather`."""
-    orderBy: [WeathersOrderBy!]
+    """The method to use when ordering `ProductsOrder`."""
+    orderBy: [ProductsOrdersOrderBy!]
 
     """
     A condition to be used in determining which values should be returned by the collection.
     """
-    condition: WeatherCondition
-  ): [Weather!]!
-}
-
-type Point {
-  x: Float!
-  y: Float!
-}
-
-type Weather {
-  city: String
-  tempLo: Int
-  tempHi: Int
-  prcp: Float
-  date: Date
-
-  """Reads a single `City` that is related to this `Weather`."""
-  cityByCity: City
+    condition: ProductsOrderCondition
+  ): [ProductsOrder!]!
 }
 
 """The day, does not include a time."""
 scalar Date
 
-"""Methods to use when ordering `Weather`."""
-enum WeathersOrderBy {
-  NATURAL
-  CITY_ASC
-  CITY_DESC
-  TEMP_LO_ASC
-  TEMP_LO_DESC
-  TEMP_HI_ASC
-  TEMP_HI_DESC
-  PRCP_ASC
-  PRCP_DESC
-  DATE_ASC
-  DATE_DESC
+type ProductsOrder implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  nodeId: ID!
+  productId: Int!
+  orderId: Int!
+  amount: BigFloat!
+
+  """Reads a single `Product` that is related to this `ProductsOrder`."""
+  product: Product
+
+  """Reads a single `Order` that is related to this `ProductsOrder`."""
+  order: Order
 }
 
 """
-A condition to be used against `Weather` object types. All fields are tested for equality and combined with a logical ‘and.’
+A floating point number that requires more precision than IEEE 754 binary 64
 """
-input WeatherCondition {
-  """Checks for equality with the object’s `city` field."""
-  city: String
+scalar BigFloat
 
-  """Checks for equality with the object’s `tempLo` field."""
-  tempLo: Int
+type Product implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  nodeId: ID!
+  productId: Int!
+  name: String
+  price: BigFloat
 
-  """Checks for equality with the object’s `tempHi` field."""
-  tempHi: Int
+  """Reads and enables pagination through a set of `ProductsOrder`."""
+  productsOrdersList(
+    """Only read the first `n` values of the set."""
+    first: Int
 
-  """Checks for equality with the object’s `prcp` field."""
-  prcp: Float
+    """Skip the first `n` values."""
+    offset: Int
 
-  """Checks for equality with the object’s `date` field."""
-  date: Date
+    """The method to use when ordering `ProductsOrder`."""
+    orderBy: [ProductsOrdersOrderBy!]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ProductsOrderCondition
+  ): [ProductsOrder!]!
 }
 
-"""Methods to use when ordering `City`."""
-enum CitiesOrderBy {
+"""Methods to use when ordering `ProductsOrder`."""
+enum ProductsOrdersOrderBy {
   NATURAL
-  CITY_ASC
-  CITY_DESC
-  LOCATION_ASC
-  LOCATION_DESC
+  PRODUCT_ID_ASC
+  PRODUCT_ID_DESC
+  ORDER_ID_ASC
+  ORDER_ID_DESC
+  AMOUNT_ASC
+  AMOUNT_DESC
   PRIMARY_KEY_ASC
   PRIMARY_KEY_DESC
 }
 
 """
-A condition to be used against `City` object types. All fields are tested for equality and combined with a logical ‘and.’
+A condition to be used against `ProductsOrder` object types. All fields are
+tested for equality and combined with a logical ‘and.’
 """
-input CityCondition {
-  """Checks for equality with the object’s `city` field."""
-  city: String
+input ProductsOrderCondition {
+  """Checks for equality with the object’s `productId` field."""
+  productId: Int
 
-  """Checks for equality with the object’s `location` field."""
-  location: PointInput
+  """Checks for equality with the object’s `orderId` field."""
+  orderId: Int
+
+  """Checks for equality with the object’s `amount` field."""
+  amount: BigFloat
 }
 
-input PointInput {
-  x: Float!
-  y: Float!
+"""Methods to use when ordering `Order`."""
+enum OrdersOrderBy {
+  NATURAL
+  ORDER_ID_ASC
+  ORDER_ID_DESC
+  CREATEDATE_ASC
+  CREATEDATE_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+"""
+A condition to be used against `Order` object types. All fields are tested for equality and combined with a logical ‘and.’
+"""
+input OrderCondition {
+  """Checks for equality with the object’s `orderId` field."""
+  orderId: Int
+
+  """Checks for equality with the object’s `createdate` field."""
+  createdate: Date
+}
+
+"""Methods to use when ordering `Product`."""
+enum ProductsOrderBy {
+  NATURAL
+  PRODUCT_ID_ASC
+  PRODUCT_ID_DESC
+  NAME_ASC
+  NAME_DESC
+  PRICE_ASC
+  PRICE_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+"""
+A condition to be used against `Product` object types. All fields are tested for equality and combined with a logical ‘and.’
+"""
+input ProductCondition {
+  """Checks for equality with the object’s `productId` field."""
+  productId: Int
+
+  """Checks for equality with the object’s `name` field."""
+  name: String
+
+  """Checks for equality with the object’s `price` field."""
+  price: BigFloat
 }
 
 """
 The root mutation type which contains root level fields which mutate data.
 """
 type Mutation {
-  """Creates a single `City`."""
-  createCity(
+  """Creates a single `Order`."""
+  createOrder(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: CreateCityInput!
-  ): CreateCityPayload
+    input: CreateOrderInput!
+  ): CreateOrderPayload
 
-  """Creates a single `Weather`."""
-  createWeather(
+  """Creates a single `Product`."""
+  createProduct(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: CreateWeatherInput!
-  ): CreateWeatherPayload
+    input: CreateProductInput!
+  ): CreateProductPayload
 
-  """Updates a single `City` using its globally unique id and a patch."""
-  updateCityByNodeId(
+  """Creates a single `ProductsOrder`."""
+  createProductsOrder(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: UpdateCityByNodeIdInput!
-  ): UpdateCityPayload
+    input: CreateProductsOrderInput!
+  ): CreateProductsOrderPayload
 
-  """Updates a single `City` using a unique key and a patch."""
-  updateCity(
+  """Updates a single `Order` using its globally unique id and a patch."""
+  updateOrderByNodeId(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: UpdateCityInput!
-  ): UpdateCityPayload
+    input: UpdateOrderByNodeIdInput!
+  ): UpdateOrderPayload
 
-  """Deletes a single `City` using its globally unique id."""
-  deleteCityByNodeId(
+  """Updates a single `Order` using a unique key and a patch."""
+  updateOrder(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: DeleteCityByNodeIdInput!
-  ): DeleteCityPayload
+    input: UpdateOrderInput!
+  ): UpdateOrderPayload
 
-  """Deletes a single `City` using a unique key."""
-  deleteCity(
+  """Updates a single `Product` using its globally unique id and a patch."""
+  updateProductByNodeId(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: DeleteCityInput!
-  ): DeleteCityPayload
+    input: UpdateProductByNodeIdInput!
+  ): UpdateProductPayload
+
+  """Updates a single `Product` using a unique key and a patch."""
+  updateProduct(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateProductInput!
+  ): UpdateProductPayload
+
+  """
+  Updates a single `ProductsOrder` using its globally unique id and a patch.
+  """
+  updateProductsOrderByNodeId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateProductsOrderByNodeIdInput!
+  ): UpdateProductsOrderPayload
+
+  """Updates a single `ProductsOrder` using a unique key and a patch."""
+  updateProductsOrder(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateProductsOrderInput!
+  ): UpdateProductsOrderPayload
+
+  """Deletes a single `Order` using its globally unique id."""
+  deleteOrderByNodeId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteOrderByNodeIdInput!
+  ): DeleteOrderPayload
+
+  """Deletes a single `Order` using a unique key."""
+  deleteOrder(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteOrderInput!
+  ): DeleteOrderPayload
+
+  """Deletes a single `Product` using its globally unique id."""
+  deleteProductByNodeId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteProductByNodeIdInput!
+  ): DeleteProductPayload
+
+  """Deletes a single `Product` using a unique key."""
+  deleteProduct(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteProductInput!
+  ): DeleteProductPayload
+
+  """Deletes a single `ProductsOrder` using its globally unique id."""
+  deleteProductsOrderByNodeId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteProductsOrderByNodeIdInput!
+  ): DeleteProductsOrderPayload
+
+  """Deletes a single `ProductsOrder` using a unique key."""
+  deleteProductsOrder(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteProductsOrderInput!
+  ): DeleteProductsOrderPayload
+  ftest(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: FtestInput!
+  ): FtestPayload
 }
 
-"""The output of our create `City` mutation."""
-type CreateCityPayload {
+"""The output of our create `Order` mutation."""
+type CreateOrderPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input,
   unchanged and unused. May be used by a client to track mutations.
   """
   clientMutationId: String
 
-  """The `City` that was created by this mutation."""
-  city: City
+  """The `Order` that was created by this mutation."""
+  order: Order
 
   """
   Our root query field type. Allows us to run any query from our mutation payload.
@@ -244,75 +404,34 @@ type CreateCityPayload {
   query: Query
 }
 
-"""All input for the create `City` mutation."""
-input CreateCityInput {
+"""All input for the create `Order` mutation."""
+input CreateOrderInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
   """
   clientMutationId: String
 
-  """The `City` to be created by this mutation."""
-  city: CityInput!
+  """The `Order` to be created by this mutation."""
+  order: OrderInput!
 }
 
-"""An input for mutations affecting `City`"""
-input CityInput {
-  city: String!
-  location: PointInput
+"""An input for mutations affecting `Order`"""
+input OrderInput {
+  orderId: Int
+  createdate: Date
 }
 
-"""The output of our create `Weather` mutation."""
-type CreateWeatherPayload {
+"""The output of our create `Product` mutation."""
+type CreateProductPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input,
   unchanged and unused. May be used by a client to track mutations.
   """
   clientMutationId: String
 
-  """The `Weather` that was created by this mutation."""
-  weather: Weather
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-
-  """Reads a single `City` that is related to this `Weather`."""
-  cityByCity: City
-}
-
-"""All input for the create `Weather` mutation."""
-input CreateWeatherInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """The `Weather` to be created by this mutation."""
-  weather: WeatherInput!
-}
-
-"""An input for mutations affecting `Weather`"""
-input WeatherInput {
-  city: String
-  tempLo: Int
-  tempHi: Int
-  prcp: Float
-  date: Date
-}
-
-"""The output of our update `City` mutation."""
-type UpdateCityPayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """The `City` that was updated by this mutation."""
-  city: City
+  """The `Product` that was created by this mutation."""
+  product: Product
 
   """
   Our root query field type. Allows us to run any query from our mutation payload.
@@ -320,8 +439,86 @@ type UpdateCityPayload {
   query: Query
 }
 
-"""All input for the `updateCityByNodeId` mutation."""
-input UpdateCityByNodeIdInput {
+"""All input for the create `Product` mutation."""
+input CreateProductInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `Product` to be created by this mutation."""
+  product: ProductInput!
+}
+
+"""An input for mutations affecting `Product`"""
+input ProductInput {
+  productId: Int
+  name: String
+  price: BigFloat
+}
+
+"""The output of our create `ProductsOrder` mutation."""
+type CreateProductsOrderPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `ProductsOrder` that was created by this mutation."""
+  productsOrder: ProductsOrder
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `Product` that is related to this `ProductsOrder`."""
+  product: Product
+
+  """Reads a single `Order` that is related to this `ProductsOrder`."""
+  order: Order
+}
+
+"""All input for the create `ProductsOrder` mutation."""
+input CreateProductsOrderInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `ProductsOrder` to be created by this mutation."""
+  productsOrder: ProductsOrderInput!
+}
+
+"""An input for mutations affecting `ProductsOrder`"""
+input ProductsOrderInput {
+  productId: Int!
+  orderId: Int!
+  amount: BigFloat
+}
+
+"""The output of our update `Order` mutation."""
+type UpdateOrderPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Order` that was updated by this mutation."""
+  order: Order
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+}
+
+"""All input for the `updateOrderByNodeId` mutation."""
+input UpdateOrderByNodeIdInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
@@ -329,24 +526,26 @@ input UpdateCityByNodeIdInput {
   clientMutationId: String
 
   """
-  The globally unique `ID` which will identify a single `City` to be updated.
+  The globally unique `ID` which will identify a single `Order` to be updated.
   """
   nodeId: ID!
 
   """
-  An object where the defined keys will be set on the `City` being updated.
+  An object where the defined keys will be set on the `Order` being updated.
   """
-  patch: CityPatch!
+  patch: OrderPatch!
 }
 
-"""Represents an update to a `City`. Fields that are set will be updated."""
-input CityPatch {
-  city: String
-  location: PointInput
+"""
+Represents an update to a `Order`. Fields that are set will be updated.
+"""
+input OrderPatch {
+  orderId: Int
+  createdate: Date
 }
 
-"""All input for the `updateCity` mutation."""
-input UpdateCityInput {
+"""All input for the `updateOrder` mutation."""
+input UpdateOrderInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
@@ -354,23 +553,22 @@ input UpdateCityInput {
   clientMutationId: String
 
   """
-  An object where the defined keys will be set on the `City` being updated.
+  An object where the defined keys will be set on the `Order` being updated.
   """
-  patch: CityPatch!
-  city: String!
+  patch: OrderPatch!
+  orderId: Int!
 }
 
-"""The output of our delete `City` mutation."""
-type DeleteCityPayload {
+"""The output of our update `Product` mutation."""
+type UpdateProductPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input,
   unchanged and unused. May be used by a client to track mutations.
   """
   clientMutationId: String
 
-  """The `City` that was deleted by this mutation."""
-  city: City
-  deletedCityNodeId: ID
+  """The `Product` that was updated by this mutation."""
+  product: Product
 
   """
   Our root query field type. Allows us to run any query from our mutation payload.
@@ -378,8 +576,8 @@ type DeleteCityPayload {
   query: Query
 }
 
-"""All input for the `deleteCityByNodeId` mutation."""
-input DeleteCityByNodeIdInput {
+"""All input for the `updateProductByNodeId` mutation."""
+input UpdateProductByNodeIdInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
@@ -387,17 +585,262 @@ input DeleteCityByNodeIdInput {
   clientMutationId: String
 
   """
-  The globally unique `ID` which will identify a single `City` to be deleted.
+  The globally unique `ID` which will identify a single `Product` to be updated.
+  """
+  nodeId: ID!
+
+  """
+  An object where the defined keys will be set on the `Product` being updated.
+  """
+  patch: ProductPatch!
+}
+
+"""
+Represents an update to a `Product`. Fields that are set will be updated.
+"""
+input ProductPatch {
+  productId: Int
+  name: String
+  price: BigFloat
+}
+
+"""All input for the `updateProduct` mutation."""
+input UpdateProductInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  An object where the defined keys will be set on the `Product` being updated.
+  """
+  patch: ProductPatch!
+  productId: Int!
+}
+
+"""The output of our update `ProductsOrder` mutation."""
+type UpdateProductsOrderPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `ProductsOrder` that was updated by this mutation."""
+  productsOrder: ProductsOrder
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `Product` that is related to this `ProductsOrder`."""
+  product: Product
+
+  """Reads a single `Order` that is related to this `ProductsOrder`."""
+  order: Order
+}
+
+"""All input for the `updateProductsOrderByNodeId` mutation."""
+input UpdateProductsOrderByNodeIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `ProductsOrder` to be updated.
+  """
+  nodeId: ID!
+
+  """
+  An object where the defined keys will be set on the `ProductsOrder` being updated.
+  """
+  patch: ProductsOrderPatch!
+}
+
+"""
+Represents an update to a `ProductsOrder`. Fields that are set will be updated.
+"""
+input ProductsOrderPatch {
+  productId: Int
+  orderId: Int
+  amount: BigFloat
+}
+
+"""All input for the `updateProductsOrder` mutation."""
+input UpdateProductsOrderInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  An object where the defined keys will be set on the `ProductsOrder` being updated.
+  """
+  patch: ProductsOrderPatch!
+  productId: Int!
+  orderId: Int!
+}
+
+"""The output of our delete `Order` mutation."""
+type DeleteOrderPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Order` that was deleted by this mutation."""
+  order: Order
+  deletedOrderNodeId: ID
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+}
+
+"""All input for the `deleteOrderByNodeId` mutation."""
+input DeleteOrderByNodeIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `Order` to be deleted.
   """
   nodeId: ID!
 }
 
-"""All input for the `deleteCity` mutation."""
-input DeleteCityInput {
+"""All input for the `deleteOrder` mutation."""
+input DeleteOrderInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
   """
   clientMutationId: String
-  city: String!
+  orderId: Int!
+}
+
+"""The output of our delete `Product` mutation."""
+type DeleteProductPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Product` that was deleted by this mutation."""
+  product: Product
+  deletedProductNodeId: ID
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+}
+
+"""All input for the `deleteProductByNodeId` mutation."""
+input DeleteProductByNodeIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `Product` to be deleted.
+  """
+  nodeId: ID!
+}
+
+"""All input for the `deleteProduct` mutation."""
+input DeleteProductInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  productId: Int!
+}
+
+"""The output of our delete `ProductsOrder` mutation."""
+type DeleteProductsOrderPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `ProductsOrder` that was deleted by this mutation."""
+  productsOrder: ProductsOrder
+  deletedProductsOrderNodeId: ID
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `Product` that is related to this `ProductsOrder`."""
+  product: Product
+
+  """Reads a single `Order` that is related to this `ProductsOrder`."""
+  order: Order
+}
+
+"""All input for the `deleteProductsOrderByNodeId` mutation."""
+input DeleteProductsOrderByNodeIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `ProductsOrder` to be deleted.
+  """
+  nodeId: ID!
+}
+
+"""All input for the `deleteProductsOrder` mutation."""
+input DeleteProductsOrderInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  productId: Int!
+  orderId: Int!
+}
+
+"""The output of our `ftest` mutation."""
+type FtestPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+  string: String
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+}
+
+"""All input for the `ftest` mutation."""
+input FtestInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  fname: String
+  cname: String
 }
